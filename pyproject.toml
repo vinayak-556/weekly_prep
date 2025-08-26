@@ -1,0 +1,29 @@
+[project]
+name = "weekly"
+version = "0.1.0"
+description = "weekly using crewAI"
+authors = [{ name = "Vinayak", email = "vinayak@deligence.com" }]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "crewai[tools]>=0.165.1,<1.0.0",
+    "google-api-python-client>=2.179.0",
+    "google-auth-oauthlib>=0.4.6",
+    "hubspot>=12.0.0",
+    "slack-sdk>=3.21.2",
+    "google-api-core>=2.11.0",
+    "google-auth>=2.28.1",
+]
+
+[project.scripts]
+weekly = "weekly.main:run"
+run_crew = "weekly.main:run"
+train = "weekly.main:train"
+replay = "weekly.main:replay"
+test = "weekly.main:test"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.crewai]
+type = "crew"

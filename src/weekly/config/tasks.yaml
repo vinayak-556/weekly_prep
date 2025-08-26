@@ -1,0 +1,90 @@
+#------------------------------ calendar task ------------------------------------------------
+calendar_task:
+  description: >
+    Fetch all Google Calendar events scheduled for the current week.use calendar_tool.
+  expected_output: >
+     Return COMPACT JSON only (no prose), with this shape exactly:
+     {
+      "count": <int>,
+      "items": [{
+        "title": <string>,
+        "day": <"Monday"-"Sunday">,
+        "start_local": <ISO-8601 in IST>,
+        "end_local": <ISO-8601 in IST>,
+        "event_link": <string|null>,
+        "location": <string|null>,
+        "description": <string|null>,
+        "attendees": [{"name": <string|null>, "email": <string|null>, "response": <string|null>}]
+      }]
+     }
+  agent: calendar_agent
+ 
+#------------------------------ gmail task ------------------------------------------------
+# gmail_task (replace expected_output)
+gmail_task:
+  description: >
+    Search email using the event title (and zoom link if present) to find
+    the most relevant thread(s) and return compact JSON (no summarization).
+  expected_output: >
+    JSON: { count, items: [{id, subject, from, date, snippet, body?}] }
+  agent: gmail_agent
+
+#--------------------------------- hubspot task--------------------------
+# hubspot_task (replace expected_output)
+hubspot_task:
+  description: >
+    For each event attendee email address, fetch contact + associated companies/deals.
+    If nothing is found, return a JSON {found:false, reason:"No HubSpot data found"}.
+  expected_output: >
+    JSON per attendee: {found:boolean, contact:{...}, companies:[...], deals:[...], meeting:{...}?}
+  agent: hubspot_agent
+
+#------------------------------ summary task ------------------------------------------------
+# summary_task (keep rules; clarify inputs are JSON)
+summary_task:
+  description: >
+    Merge calendar (JSON), gmail (JSON), and hubspot (JSON) for each event
+    and output strict plain text in the exact format. No asterisks or markdown.
+    Convert times to 12-hour AM/PM. If no meetings, return exactly:
+    "There is no meeting this week."
+  expected_output: >
+    Thursday
+    Strips & CrewAI
+    Source - (Who it came from)
+    Attendee - (Who I’m meeting with and their Linkedin link)
+    Speaking at databricks summit
+    Summary
+    Event link
+    Meeting with a Customer
+    Hubspot data
+    Attendees
+  agent: summary_agent
+
+
+#----------------------------- Google docs task ------------------------------------------------------
+
+google_doc_task:
+  description: >
+    create a Google Doc and insert the summary provided by the summary_tool.  
+    Important -  Do not include any special character specially "*".
+    Don't change the earlier format send by the summary_agent.
+  expected_output: >
+    A shareable single Google Docs URL containing the correctly formatted meeting summaries.
+  agent: google_doc_agent
+
+
+#------------------------------ slack notification task ------------------------------------------------
+slack_notification_task:
+  description: >
+    send doc link via slack_tool
+    via the Slack API to the specified user or channel. Don't send anything from your side other than doc link by google_doc_agent
+    
+  expected_output: >
+    A Slack message successfully delivered to the target user or channel 
+    containing doc link.
+  agent: slack_notification_agent
+
+
+
+
+
