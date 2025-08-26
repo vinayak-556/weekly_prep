@@ -16,10 +16,7 @@ dependencies = [
 
 [project.scripts]
 weekly = "weekly.main:run"
-run_crew = "weekly.main:run"
-train = "weekly.main:train"
-replay = "weekly.main:replay"
-test = "weekly.main:test"
+
 
 [build-system]
 requires = ["hatchling"]
